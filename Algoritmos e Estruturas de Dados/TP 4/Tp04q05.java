@@ -2,18 +2,20 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 
-public class Tp04q01 {
+public class Tp04q05 {
     
     public static boolean isNotEnd(String entry) {
         return !(entry.length() >= 3 && entry.charAt(0) == 'F' && entry.charAt(1) == 'I' && entry.charAt(2) == 'M');
     }
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws Exception {
         String entry = "", search = "";
         Personagem p;
-        ArvoreBinaria arvore = new ArvoreBinaria();
+        HashReserva tabela = new HashReserva();
 
-        // Leitura dos dados pra inserir na árvore
+        MyIO.setCharset("ISO-8859-1");
+
+        // Leitura dos dados pra inserir na tabela
         do {
             entry = MyIO.readLine();
             p = new Personagem();
@@ -21,7 +23,7 @@ public class Tp04q01 {
             if (isNotEnd(entry)) {
                 try {
                     p.ler(entry);
-                    arvore.inserir(p);
+                    tabela.inserir(p);
                 }
                 catch (Exception e) {
                     System.out.println(e);
@@ -30,13 +32,16 @@ public class Tp04q01 {
 
         } while (isNotEnd(entry));
 
-
-        // Pesquisa por nome
+        // Faz a pesquisa por nome
         do {
             search = MyIO.readLine();
 
             if (isNotEnd(search)) {
-                arvore.pesquisar(search);
+                MyIO.print(search + " ");
+                if(tabela.pesquisar(search))
+                    MyIO.println("SIM");
+                else
+                    MyIO.println("NÃO");
             }
 
         } while (isNotEnd(search));
@@ -44,109 +49,77 @@ public class Tp04q01 {
     }
 }
 
-/** 
- * Classe de árvore Binária
- * @author Bryan Santos Oliveira
- */
-class ArvoreBinaria {
+class HashReserva {
+    public Personagem[] tabela;
+    public int tamTab;
+    public int reserva;
 
-    No raiz;
+    HashReserva() {
+        this(21, 9);
+    }
+    
+    // Construtor com tamanho da tabela e da reserva
+    HashReserva(int tamTab, int reserva) {
+        this.tamTab = tamTab;
+        this.reserva = reserva;
 
-    ArvoreBinaria() {
-        raiz = null;
+        tabela = new Personagem[(tamTab + reserva)];
+
+        for (int i = 0; i < tabela.length; i++){
+            tabela[i] = null;
+        }
     }
 
     /**
-     * Insere um personagem na árvore com a chave de pesquisa sendo o nome
-     * @param p
-     * @throws Exception
+     * Função de hash a partir de um personagem
+     * @param p Personagem
+     * @return inteiro
      */
-    private No inserir(Personagem p, No no) throws Exception {
-        if (no == null)
-            no = new No(p);
-        else if (p.getNome().compareTo(no.elemento.getNome()) > 0)
-            no.dir = inserir(p, no.dir);
-        else if (p.getNome().compareTo(no.elemento.getNome()) < 0)
-            no.esq = inserir(p, no.esq);
-        else
-            throw new Exception("Erro! Personagem já existe na árvore");
-        return no;
+    public int hash(Personagem p) {
+        return p.getAltura() % this.tamTab;
     }
 
+    /**
+     * Insere um personagem na tabela
+     * @param p personagem
+     */
     public void inserir(Personagem p) {
-        try {
-            raiz = inserir(p, raiz);
-        } catch (Exception e) {
-            System.out.println(e);
+        int pos = hash(p);
+
+        if (tabela[pos] == null) 
+            tabela[pos] = p;
+
+        else {
+            int i = tamTab;
+
+            while (i < tabela.length && tabela[i] != null) i++;
+
+            if (i < tabela.length) 
+                tabela[i] = p;
         }
     }
 
     /**
-     * Método privado que pesquisa por um personagem na árvore
+     * Pesquisa por um personagem na tabela pelo nome
      * @param nome
-     * @param no
-     * @return um Booleano indicando se tem ou não
+     * @return
      */
-    private boolean pesquisar(String nome, No no) {
-        boolean resp = false;
-        if (no != null) {
-            if (no.elemento.getNome().equals(nome))
-                resp = true;
-            else if (nome.compareTo(no.elemento.getNome()) > 0) {
-                MyIO.print("dir ");
-                resp = pesquisar(nome, no.dir);
-            }
-            else {
-                MyIO.print("esq ");
-                resp = pesquisar(nome, no.esq);
-            }
-        }
-        return resp;
+    public boolean pesquisar(String nome) {
+        boolean result = false;
+        
+        for (int i = 0; !result && i < tabela.length; i++)
+            result = (tabela[i] == null) ? false : tabela[i].getNome().equals(nome);
+
+        return result;
     }
 
-    /**
-     * Pesquisa por um personagem na árvore e printa SIM ou NAO
-     * @param nome
-     */
-    public void pesquisar(String nome) {
-        MyIO.print(nome + " ");
-
-        MyIO.print("raiz ");
-        if (pesquisar(nome, this.raiz))
-            MyIO.println("SIM");
-        else
-            MyIO.println ( " N"+(char)195+"O" );
+    
+    public void mostrar(){
+        for (int i = 0; i < tabela.length; i++)
+            if (tabela[i] != null) 
+                tabela[i].imprimir();
     }
 
-    private void mostrarCentral(No no) {
-        if (no != null) {
-            mostrarCentral(no.esq);
-            MyIO.print(no.elemento.getNome() + " ");
-            mostrarCentral(no.dir);
-        }
-    }
-
-    public void mostrarCentral() {
-        mostrarCentral(this.raiz);
-    }
-
-}
-
-/** 
- * O nó de uma árvore binária 
- */
-class No {
-    No esq, dir;
-    Personagem elemento;
-
-    No() {
-        this(new Personagem());
-    }
-
-    No(Personagem p) {
-        this.esq = this.dir = null;
-        this.elemento = p;
-    }
 }
 
 /**

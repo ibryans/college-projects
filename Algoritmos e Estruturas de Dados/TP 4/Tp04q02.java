@@ -8,10 +8,12 @@ public class Tp04q02 {
         return !(entry.length() >= 3 && entry.charAt(0) == 'F' && entry.charAt(1) == 'I' && entry.charAt(2) == 'M');
     }
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws Exception {
         String entry = "", search = "";
         Personagem p;
         ArvoreArvore arvore = new ArvoreArvore();
+
+        MyIO.setCharset("ISO-8859-1");
 
         // Leitura dos dados pra inserir na árvore
         do {
@@ -30,8 +32,7 @@ public class Tp04q02 {
 
         } while (isNotEnd(entry));
 
-
-        // Pesquisa por nome
+        // Faz a pesquisa por nome
         do {
             search = MyIO.readLine();
 
@@ -52,8 +53,45 @@ class ArvoreArvore {
 
     NoPrimeiro raiz;
 
-    ArvoreArvore() {
+    ArvoreArvore() throws Exception {
         raiz = null;
+        raiz = inserirChave(7, raiz);
+        raiz = inserirChave(3, raiz);
+        raiz = inserirChave(11, raiz);
+        raiz = inserirChave(1, raiz);
+        raiz = inserirChave(5, raiz);
+        raiz = inserirChave(9, raiz);
+        raiz = inserirChave(12, raiz);
+        raiz = inserirChave(0, raiz);
+        raiz = inserirChave(2, raiz);
+        raiz = inserirChave(4, raiz);
+        raiz = inserirChave(6, raiz);
+        raiz = inserirChave(8, raiz);
+        raiz = inserirChave(10, raiz);
+        raiz = inserirChave(13, raiz);
+        raiz = inserirChave(14, raiz);
+    }
+
+    /**
+     * Método que insere um personagem na árvore de um determinado nó da primeira árvore
+     * @param p Personagem (Nome)
+     * @param no Nó da primeira árvore
+     * @throws Exception
+     */
+    private NoSegundo inserirSegunda(String p, NoSegundo no) throws Exception {
+        if (no == null)
+            no = new NoSegundo(p);
+
+        else if (p.compareTo(no.elemento) > 0)
+            no.dir = inserirSegunda(p, no.dir);
+
+        else if (p.compareTo(no.elemento) < 0)
+            no.esq = inserirSegunda(p, no.esq);
+        
+        else
+            throw new Exception("Erro! Personagem já existe na árvore");
+
+        return no;
     }
 
     /**
@@ -62,45 +100,100 @@ class ArvoreArvore {
      * @throws Exception
      */
     private NoPrimeiro inserir(Personagem p, NoPrimeiro no) throws Exception {
-        if (no == null)
-            no = new NoPrimeiro(p.getAltura() % 15);
-        else if (p.getNome().compareTo(no.elemento.getNome()) > 0)
-            no.dir = inserir(p, no.dir);
-        else if (p.getNome().compareTo(no.elemento.getNome()) < 0)
-            no.esq = inserir(p, no.esq);
-        else
-            throw new Exception("Erro! Personagem já existe na árvore");
+        
+        if (no != null) {
+            if (p.getAltura() % 15 == no.chave)
+                no.arvore = inserirSegunda(p.getNome(), no.arvore);
+
+            else if (p.getAltura() % 15 < no.chave)
+                no.esq = inserir(p, no.esq);
+
+            else if (p.getAltura() % 15 > no.chave)
+                no.dir = inserir(p, no.dir);
+
+            else 
+                throw new Exception("Erro ao inserir!");
+        }
+
         return no;
     }
 
-    public void inserir(Personagem p) {
-        try {
-            raiz = inserir(p, raiz);
-        } catch (Exception e) {
-            System.out.println(e);
-        }
+    /** Método para inserir um personagem na estrutura */
+    public void inserir(Personagem p) throws Exception {
+        raiz = inserir(p, raiz);
+    }
+
+    /** Insere uma chave (nó) na primeira árvore */
+    public NoPrimeiro inserirChave(int chave, NoPrimeiro no) throws Exception {
+        if (no == null)
+            no = new NoPrimeiro(chave);
+
+        else if (chave < no.chave)
+            no.esq = inserirChave(chave, no.esq);
+
+        else if (chave > no.chave)
+            no.dir = inserirChave(chave, no.dir);
+        
+        else
+            throw new Exception("Erro! chave já existe na árvore");
+
+        return no;
     }
 
     /**
-     * Método privado que pesquisa por um personagem na árvore
+     * Pesquisar um personagem na árvore de um nó da primeira árvore
+     * @param nome Nome pesquisado
+     * @param no Nó atual (segunda árvore)
+     * @return <code>True</code> ou <code>False</code>
+     */
+    private boolean pesquisarSegunda(String nome, NoSegundo no) {
+        boolean resp = false;
+
+        if (no != null) {
+            if (no.elemento.equals(nome))
+                resp = true;
+
+            if (!resp) {
+                MyIO.print("ESQ ");
+                resp = pesquisarSegunda(nome, no.esq);
+            }
+
+            if (!resp) {
+                MyIO.print("DIR ");
+                resp = pesquisarSegunda(nome, no.dir);
+            }
+        }
+
+        return resp;
+    }
+
+    /**
+     * Método privado que pesquisa por um personagem na árvore de árvore
      * @param nome
      * @param no
      * @return um Booleano indicando se tem ou não
      */
     private boolean pesquisar(String nome, NoPrimeiro no) {
         boolean resp = false;
+
         if (no != null) {
-            if (no.elemento.getNome().equals(nome))
-                resp = true;
-            else if (nome.compareTo(no.elemento.getNome()) > 0) {
-                MyIO.print("dir ");
-                resp = pesquisar(nome, no.dir);
-            }
-            else {
+            resp = pesquisarSegunda(nome, no.arvore);
+
+            // Não achou na árvore do nó atual
+            if (!resp) {
+
+                // Procura na esquerda
                 MyIO.print("esq ");
                 resp = pesquisar(nome, no.esq);
+                
+                // Se não achou na esquerda procura na direita
+                if (!resp) {
+                    MyIO.print("dir ");
+                    resp = pesquisar(nome, no.dir);
+                }
             }
         }
+
         return resp;
     }
 
@@ -109,13 +202,11 @@ class ArvoreArvore {
      * @param nome
      */
     public void pesquisar(String nome) {
-        MyIO.print(nome + " ");
+        MyIO.print(nome + " raiz ");
+        boolean result = pesquisar(nome, raiz);
 
-        MyIO.print("raiz ");
-        if (pesquisar(nome, this.raiz))
-            MyIO.println("SIM");
-        else
-            MyIO.println ( " N"+(char)195+"O" );
+        if (result) MyIO.println("SIM");
+        else MyIO.println("NÃO");
     }
 
 }
@@ -134,7 +225,7 @@ class NoPrimeiro {
 
     NoPrimeiro(int c) {
         this.esq = this.dir = null;
-        this.arvore = new NoSegundo();
+        this.arvore = null;
         this.chave = c;
     }
 }
@@ -144,13 +235,13 @@ class NoPrimeiro {
  */
 class NoSegundo {
     NoSegundo esq, dir;
-    Personagem elemento;
+    String elemento;
 
     NoSegundo() {
-        this(new Personagem());
+        this("");
     }
 
-    NoSegundo(Personagem p) {
+    NoSegundo(String p) {
         elemento = p;
         esq = dir = null;
     }

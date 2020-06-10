@@ -2,74 +2,131 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 
-/** 
- * Classe de árvore Binária
- * @author Bryan Santos Oliveira
- */
-class ArvoreBinaria {
-
-    No raiz;
-
-    ArvoreBinaria() {
-        raiz = null;
+public class Tp04q06 {
+    
+    public static boolean isNotEnd(String entry) {
+        return !(entry.length() >= 3 && entry.charAt(0) == 'F' && entry.charAt(1) == 'I' && entry.charAt(2) == 'M');
     }
 
-    /**
-     * Insere um personagem na árvore com a chave de pesquisa sendo o nome
-     * @param p
-     * @throws Exception
-     */
-    public void inserir(Personagem p, No no) throws Exception {
-        if (no == null)
-            no = new No(p);
-        else if (p.getNome().compareTo(no.elemento.getNome()) > 0)
-            inserir(p, no.dir);
-        else if (p.getNome().compareTo(no.elemento.getNome()) < 0)
-            inserir(p, no.esq);
-        else
-            throw new Exception("Erro! Personagem já existe na árvore");
-    }
+    public static void main(String[] args) throws Exception {
+        String entry = "", search = "";
+        Personagem p;
+        HashRehash tabela = new HashRehash();
 
-    /**
-     * Pesquisa por um personagem na árvore através do nome
-     * @param nome
-     * @param no
-     * @return um Booleano indicando se tem ou não
-     */
-    public boolean pesquisar(String nome, No no) {
-        boolean resp = false;
-        if (no != null) {
-            if (no.elemento.getNome().equals(nome))
-                resp = true;
-            else if (nome.compareTo(no.elemento.getNome()) > 0) {
-                System.out.println("dir ");
-                resp = pesquisar(nome, no.dir);
+        MyIO.setCharset("ISO-8859-1");
+
+        // Leitura dos dados pra inserir na tabela
+        do {
+            entry = MyIO.readLine();
+            p = new Personagem();
+
+            if (isNotEnd(entry)) {
+                try {
+                    p.ler(entry);
+                    tabela.inserir(p);
+                }
+                catch (Exception e) {
+                    System.out.println(e);
+                }
             }
-            else {
-                System.out.println("esq ");
-                resp = pesquisar(nome, no.esq);
-            }
-        }
-        return resp;
-    }
 
+        } while (isNotEnd(entry));
+
+        // Faz a pesquisa por nome
+        do {
+            search = MyIO.readLine(); 
+            if (isNotEnd(search)) {
+                MyIO.print(search + " ");
+                if(tabela.pesquisar(search))
+                    MyIO.println("SIM");
+                else
+                    MyIO.println("NÃO");
+            }
+
+        } while (isNotEnd(search));
+
+    }
 }
 
-/** 
- * O nó de uma árvore binária 
+/**
+ * Classe de tabela hash com uso de rehash
+ * @autho Bryan Santos Oliveira
  */
-class No {
-    No esq, dir;
-    Personagem elemento;
+class HashRehash {
+    public Personagem[] tabela;
+    public int tamanho;
 
-    No() {
-        this(new Personagem());
+    HashRehash() {
+        this(25);
+    }
+    
+    /** 
+     * Construtor da classe passando o tamanho da tabela
+     */
+    HashRehash(int tamanho) {
+        this.tamanho = tamanho;
+        tabela = new Personagem[(tamanho)]; 
+
+        for (int i = 0; i < tabela.length; i++)
+            tabela[i] = null;
     }
 
-    No(Personagem p) {
-        this.esq = this.dir = null;
-        this.elemento = p;
+    /**
+     * Função de hash a partir de um personagem
+     * @param p Personagem
+     * @return inteiro
+     */
+    public int hash(Personagem p) {
+        return (p.getAltura() % this.tamanho);
     }
+    
+    /**
+     * Função de rehash a partir de um personagem
+     * @param p Personagem
+     * @return inteiro
+     */ 
+    public int reHash(Personagem p) {
+        return ((p.getAltura()+1) % this.tamanho);
+    }
+
+    /**
+     * Inserção de um personagem na tabela
+     * @param p
+     */
+    public void inserir(Personagem p) {
+        int pos = hash(p);
+
+        if (tabela[pos] == null) 
+            tabela[pos] = p;
+
+        else{
+            pos = reHash(p);
+
+            if (tabela[pos] == null) 
+                tabela[pos] = p;
+        }
+
+    }
+
+    /**
+     * Pesquisa de um personagem pelo nome na tabela
+     * @param nome Nome do personagem
+     */
+    public boolean pesquisar(String nome) {
+        boolean encontrado = false;
+        
+        for (int i = 0; !encontrado && i < tabela.length; i++)
+            encontrado = (tabela[i] == null) ? false : tabela[i].getNome().equals(nome);
+
+        return encontrado;
+    }
+
+    
+    public void mostrar(){
+        for (int i = 0; i < tabela.length; i++)
+            if (tabela[i] != null) tabela[i].imprimir();
+    }
+
 }
 
 /**

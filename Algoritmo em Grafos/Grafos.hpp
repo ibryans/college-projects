@@ -5,66 +5,109 @@
 using namespace std;
 
 class Grafo;
-class GrafoDirecionado;
-class GrafoPonderado;
-class Grafo;
+class GrafoP;
 
-class ListaVerticesPonderados;
+class ListaVerticesP;
 class ListaVertices;
-class Vertice;
-class VerticePonderado;
 
-class ListaArestasPonderadas;
+class Vertice;
+class VerticeP;
+
+class ListaArestasP;
 class ListaArestas;
 
-class ArestaPonderada;
+class ArestaP;
 class Aresta;
 
-/** Grafo direcionado não ponderado **/
-
-/** Grafo não direcionado não ponderado **/
-
-/** Grafo direcionado ponderado **/
-
+/** Grafo não ponderado **/
 class Grafo {
     public:
-        bool direcional;
-        ListaVerticesPonderados *vertices;
+        bool direcional; // Indica se o grafo é direcional ou não
+        ListaVertices *vertices;
         Grafo(bool direcional);
         void incluirVertice(int valor);
-        void incluirAresta(int inicio, int fim, int peso);
         void incluirAresta(int v1, int v2);
 };
 
-class ListaVerticesPonderados {
+/** Grafo ponderado **/
+class GrafoP {
     public:
-        VerticePonderado *primeiro;
-        VerticePonderado *ultimo;
-        ListaVerticesPonderados();
-        VerticePonderado *add(VerticePonderado *v);
+        bool direcional; // Indica se o grafo é direcional ou não
+        ListaVerticesP *vertices;
+        GrafoP(bool direcional);
+        void incluirVertice(int valor);
+        void incluirAresta(int v1, int v2, int peso);
 };
 
-class VerticePonderado {
+/** Lista de vértices com arestas ponderadas **/
+class ListaVerticesP {
+    public:
+        VerticeP *primeiro;
+        VerticeP *ultimo;
+        ListaVerticesP();
+        VerticeP *add(VerticeP *v);
+};
+
+/** Lista de vértices com arestas simples **/
+class ListaVertices {
+    public:
+        Vertice *primeiro;
+        Vertice *ultimo;
+        ListaVertices();
+        Vertice *add(Vertice *v);
+};
+
+/** Vértice com arestas ponderadas **/
+class VerticeP {
     public:
         int valor;
-        VerticePonderado *prox;
-        ListaArestasPonderadas *arestas;
-        VerticePonderado(int valor);
+        VerticeP *prox;
+        ListaArestasP *arestas;
+        VerticeP(int valor);
 };
 
-class ListaArestasPonderadas {
-    public:
-        ArestaPonderada *primeira;
-        ArestaPonderada *ultima;
-        ListaArestasPonderadas();
-        ArestaPonderada *add(ArestaPonderada *a);
-};
-
-class ArestaPonderada {
+/** Vértice com arestas simples **/
+class Vertice {
     public:
         int valor;
-        ArestaPonderada *prox;
-        VerticePonderado *inicio;
-        VerticePonderado *fim;
-        ArestaPonderada(int valor, VerticePonderado *i, VerticePonderado *f);
+        Vertice *prox;
+        ListaArestas *arestas;
+        Vertice(int valor);
+};
+
+/** Lista Arestas ponderadas **/
+class ListaArestasP {
+    public:
+        ArestaP *primeira;
+        ArestaP *ultima;
+        ListaArestasP();
+        ArestaP *add(ArestaP *a);
+};
+
+/** Lista Arestas simples **/
+class ListaArestas {
+    public:
+        Aresta *primeira;
+        Aresta *ultima;
+        ListaArestas();
+        Aresta *add(Aresta *a);
+};
+
+/** Aresta ponderada **/
+class ArestaP {
+    public:
+        int valor;
+        ArestaP *prox;
+        VerticeP *inicio;
+        VerticeP *fim;
+        ArestaP(int valor, VerticeP *i, VerticeP *f);
+};
+
+/** Aresta simples **/
+class Aresta {
+    public:
+        Aresta *prox;
+        Vertice *inicio;
+        Vertice *fim;
+        Aresta(Vertice *i, Vertice *f);
 };

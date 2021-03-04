@@ -4,43 +4,67 @@
 
 using namespace std;
 
-class GrafoDirecionadoPonderado {
+class Grafo;
+class GrafoDirecionado;
+class GrafoPonderado;
+class Grafo;
+
+class ListaVerticesPonderados;
+class ListaVertices;
+class Vertice;
+class VerticePonderado;
+
+class ListaArestasPonderadas;
+class ListaArestas;
+
+class ArestaPonderada;
+class Aresta;
+
+/** Grafo direcionado não ponderado **/
+
+/** Grafo não direcionado não ponderado **/
+
+/** Grafo direcionado ponderado **/
+
+class Grafo {
     public:
+        bool direcional;
         ListaVerticesPonderados *vertices;
-        void incluirAresta(VerticePonderado *pai, VerticePonderado *filho, char rotulo);
+        Grafo(bool direcional);
+        void incluirVertice(int valor);
+        void incluirAresta(int inicio, int fim, int peso);
+        void incluirAresta(int v1, int v2);
 };
 
 class ListaVerticesPonderados {
-    private:
+    public:
         VerticePonderado *primeiro;
         VerticePonderado *ultimo;
-    public:
         ListaVerticesPonderados();
         VerticePonderado *add(VerticePonderado *v);
 };
 
 class VerticePonderado {
     public:
-        char rotulo;
+        int valor;
         VerticePonderado *prox;
         ListaArestasPonderadas *arestas;
-        VerticePonderado(char *rotulo);
+        VerticePonderado(int valor);
 };
 
 class ListaArestasPonderadas {
-    private:
+    public:
         ArestaPonderada *primeira;
         ArestaPonderada *ultima;
-    public:
         ListaArestasPonderadas();
-        void add(ArestaPonderada *a);
+        ArestaPonderada *add(ArestaPonderada *a);
 };
 
 class ArestaPonderada {
     public:
-        char rotulo;
+        int valor;
         ArestaPonderada *prox;
         VerticePonderado *inicio;
         VerticePonderado *fim;
-        ArestaPonderada(char rotulo, VerticePonderado *i, VerticePonderado *f);
+        ArestaPonderada(int valor, VerticePonderado *i, VerticePonderado *f);
 };

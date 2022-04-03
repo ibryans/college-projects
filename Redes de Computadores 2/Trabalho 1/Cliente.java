@@ -13,20 +13,20 @@ public class Cliente {
 		
 		try {
             // Estabelecer conexao com o servidor:
-			Socket socktCli = new Socket (ipServidor, portaServidor);
-			String strMsg;
+			Socket socketCliente = new Socket (ipServidor, portaServidor);
+			String mensagem;
 
             do {
                 // Criar um pacote de entrada para receber mensagens, associando-o a conexao:
-                ObjectInputStream sCliIn = new ObjectInputStream (socktCli.getInputStream());
-                strMsg = sCliIn.readObject().toString(); // Espera por um pacote
+                ObjectInputStream sCliIn = new ObjectInputStream (socketCliente.getInputStream());
+                mensagem = sCliIn.readObject().toString(); // Espera por um pacote
     
-				if (!strMsg.equals("FIN")) {
+				if (!mensagem.equals("FIN")) {
 					// Processa o pacote recebido:
-					System.out.println(ANSI_CURSOR_BEGIN + ANSI_CLEAR_SCREEN + strMsg);
+					System.out.println(ANSI_CURSOR_BEGIN + ANSI_CLEAR_SCREEN + mensagem);
 
 					// Criar um pacote de saida para enviar mensagens, associando-o a conexao:
-					ObjectOutputStream sCliOut = new ObjectOutputStream(socktCli.getOutputStream());
+					ObjectOutputStream sCliOut = new ObjectOutputStream(socketCliente.getOutputStream());
 					String entrada = leitor.nextLine();
 					sCliOut.writeObject(entrada); // Escreve no pacote
 					sCliOut.flush(); // Envia o pacote
@@ -36,10 +36,10 @@ public class Cliente {
                     System.out.println(ANSI_CURSOR_BEGIN + ANSI_CLEAR_SCREEN + "> Execução encerrada\n\n\n");
                 }
                 
-            } while (!strMsg.equals("FIN"));
+            } while (!mensagem.equals("FIN"));
 
 			// Finaliza a conexao:
-			socktCli.close();
+			socketCliente.close();
 			leitor.close();
         } catch(Exception e){
             e.printStackTrace();

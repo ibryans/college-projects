@@ -137,7 +137,7 @@ public class Servidor extends Thread {
 
                 String mensagem = receberMensagem();
 
-                if(mensagem!=null && !mensagem.equals("0")){
+                if (mensagem != null && !mensagem.equals("0")){
                     // Realiza compra da passagem
                     int index = Integer.parseInt(mensagem)-1;
                     if (Servidor.passagens[index].quantidade > 0) {

@@ -1,0 +1,3 @@
+Um aluno da Ciência da Computação deseja instalar um servidor de telnet em sua casa. Sabe-se que o notebook do aluno está conectado em um roteador usando um endereço privado na rede 10.0.0.0/8 e que esse roteador está conectado em um modem do provedor e que o modem do provedor tem um endereço IPv4 dinâmico. Como o aluno pode fazer essa configuração? Em sua resposta utilize Forwarding de portas e DNS dinâmico.
+
+-> 

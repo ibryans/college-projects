@@ -1,0 +1,25 @@
+O principal protocolo para evitar colisões (e o mais eficiente) é o chamado CSMA (Carrier Sense Multiple Access), e ele é constituido de algumas variações:
+
+>> CSMA
+
+- Quando uma estação quer transmitir, ela escuta o canal.
+- Se tiver ocupado, não utiliza
+- Se caso utilizar e estiver ocupado, espera um tempo aleatório e recomeça
+
+-> CSMA 1-persistente
+- Faz com que a estação escute o canal até que ele fique desocupado, e imediatamente inicia a transmissão.
+
+-> CSMA p-persistente
+- Mesmo jeito do 1-persistente
+- Mas quando o canal fica desocupado, ele espera um número aleatório de slots de tempo e aí sim transmite
+
+-> CSMA não persistente
+- Não escuta o meio o tempo todo. Apenas uma vez em um intervalo de tempo.
+- Escutou -> Estava livre, ele transmite. Estava ocupado, ele para de escutar o meio, aguarda um tempo aleatório, e refaz o processo
+
+>> CSMA/CD
+
+- Fica escutando o meio para detectar colisões, assim que inicia a transmissão de um quadro.
+(Economia de tempo e largura de banda)
+- Se detecta colisão, para a transmissão imediatamente e aguarda um tempo aleatório
+- Refaz o processo.

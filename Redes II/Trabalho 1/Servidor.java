@@ -1,7 +1,6 @@
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.io.*;
-import java.util.Date;
 import java.text.DecimalFormat;
 
 /** Passagem de voo */
@@ -62,8 +61,10 @@ public class Servidor extends Thread {
     
     /** Array de passagens aéreas */
     private static Passagem[] passagens = {
-        new Passagem("Belo Horizonte", "São Paulo", 120.99, "20/04/2022 22:30", 10),
-        new Passagem("São Paulo", "Belo Horizonte", 99.90, "25/04/2022 18:00", 8),
+        new Passagem("Belo Horizonte - BR", "São Paulo - BR", 120.99, "20/04/2022 22:30", 10),
+        new Passagem("São Paulo - BR", "Belo Horizonte - BR", 99.90, "25/04/2022 18:00", 8),
+        new Passagem("São Paulo - BR", "Orlando - EUA", 1800.00, "08/04/2022 19:30", 5),
+        new Passagem("Contagem - BR", "Gramado - BR", 869.90, "04/04/2022 12:00", 10),
     };
 
     /** Construtor do servidor - Define a variável de conexão */
@@ -140,8 +141,14 @@ public class Servidor extends Thread {
                 if (mensagem != null && !mensagem.equals("0")){
                     // Realiza compra da passagem
                     int index = Integer.parseInt(mensagem)-1;
+
                     if (Servidor.passagens[index].quantidade > 0) {
                         Servidor.passagens[index].quantidade--;
+                        enviarMensagem("Compra realizada com sucesso! Pressione ENTER para continuar...");
+                        receberMensagem();
+                    } else {
+                        enviarMensagem("Ops! Esta passagem está esgotada. Tente novamente mais tarde.\n\nPressione ENTER para continuar...");
+                        receberMensagem();
                     }
                 }
                 else 

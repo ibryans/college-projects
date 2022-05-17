@@ -43,12 +43,13 @@ def zoom(x, y, op):
 
 def draw_rectangle(x, y):
     global imgDefault
-    print('ha')
+
+    print('\nCoordenadas: ')
+
     control.image_checked = True
     control.pixel_checked = (x, y)
 
-    print('x: ' + str(x))
-    print('y: ' + str(y))
+    print('(' + str(x) + ', ' + str(y) + ')')
 
     img = imgQueueUncolor[len(imgQueueUncolor)-1].copy()
     cv.imshow(window_name, img)
@@ -60,6 +61,8 @@ def draw_rectangle(x, y):
 
     imgQueue.append(img)
     imgDefault = img
+
+    control.mark_image_rectangle = False
 
 # Core functions
 

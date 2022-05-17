@@ -1,43 +1,34 @@
-import io
 import os
 import PySimpleGUI as sg
-
 from matplotlib import pyplot as plt;
 import matplotlib.image as mpimg
-
-import parameters
 import control
-
 import tkinter.filedialog as tkf
-from PIL import ImageTk, Image
 
 from opencv import opencv
 
-elements_col_size = (60, 0)
-zoom_buttons_size = (20, 0)
-
 def open_image(filename):
     if os.path.exists(filename):
-        # opencv.abrir_imagem(filename)
-        image = Image.open(filename)
-        image.thumbnail((400,400))
-        bio = io.BytesIO()
-        image.save(bio, format="PNG")
-        tela(bio.getvalue())
+        opencv.abrir_imagem(filename)
+        # image = Image.open(filename)
+        # image.thumbnail((400,400))
+        # bio = io.BytesIO()
+        # image.save(bio, format="PNG")
+        # tela(bio.getvalue())
 
-def tela(imagePath):
+def tela():
 
     menu_def = [
-        ['&Arquivo', ['&Abrir imagem', '&Limpar', '&Sair']],
-        ['&Imagem', ['&Selecionar região', '&Cortar']],
-        ['&Opções', ['&Ler imagens de treino', '&Treinar classificador', '&Exibir características da imagem/região', '&Classificar imagem/região']] 
+        ['&Arquivo', ['&Abrir imagem', '&Sair']],
+        ['&Imagem', ['&Limpar', '&Selecionar região', '&Exibir características da imagem/região']],
+        ['&Classificador', ['&Ler imagens de treino', '&Treinar classificador', '&Classificar imagem/região']] 
     ]
 
     layout = [
         [sg.MenuBar(menu_def)],
-        [sg.Image(imagePath)],
+        # [sg.Image(imagePath)],
         [sg.Column(layout='')],[sg.Column(layout='')],[sg.Column(layout='')],
-        [sg.Text('Output')],
+        [sg.Text('Saída')],
         [sg.Output(size=(54, 5))],
     ]
     
@@ -46,14 +37,30 @@ def tela(imagePath):
     while True:
         event, values = window.read()
 
-        if event in (None, 'Fechar'):
+
+        if event in (None, 'Sair'):
             break
 
-        if event == 'Abrir imagem':
+        elif event == 'Abrir imagem':
             filename = os.path.abspath(tkf.askopenfilename(initialdir = os.getcwd(), title="Selecione sua imagem"))
-            window.close()
+            # window.close()
             open_image(filename)
-            break
 
-        if event == 'Selecionar região':
-            print('AIOA')
+        elif event == 'Limpar':
+            opencv.reset_image()
+
+        elif event == 'Selecionar região':
+            print('\n****** Selecionando Região ******')
+            control.mark_image_rectangle = True
+
+        elif event == 'Exibir características da imagem/região':
+            print("\n****** Características da imagem ******")
+
+        elif event == 'Ler imagens de treino':
+            print("\n****** Lendo imagens de treino ******")
+
+        elif event == 'Treinar classificador':
+            print("\n****** Treinando classificador ******")
+
+        elif event == 'Classificar imagem/região':
+            print("\n****** Classificando imagem ******")

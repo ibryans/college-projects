@@ -17,12 +17,12 @@ zoom_buttons_size = (20, 0)
 
 def open_image(filename):
     if os.path.exists(filename):
-        # opencv.abrir_imagem(filename)
-        image = Image.open(filename)
-        image.thumbnail((400,400))
-        bio = io.BytesIO()
-        image.save(bio, format="PNG")
-        imagem.tela(bio.getvalue())
+        opencv.abrir_imagem(filename)
+        # image = Image.open(filename)
+        # image.thumbnail((400,400))
+        # bio = io.BytesIO()
+        # image.save(bio, format="PNG")
+        # imagem.tela(bio.getvalue())
 
 def start():
 
@@ -44,6 +44,7 @@ def start():
             filename = values['select_image']
             window.close()
             open_image(filename)
+            imagem.tela()
             break
                 
 
